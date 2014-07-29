@@ -1,0 +1,137 @@
+/*
+ * Classic example grammar, which recognizes simple arithmetic expressions like
+ * "2*(3+4)". The parser generated from this grammar then computes their value.
+ */
+{
+  function replaceLastElse(condition, elseBranch){
+      if (condition[3]==null){
+          condition[3] = elseBranch;
+          return condition;
+      }
+      condition[3] = replaceLastElse(condition[3], elseBranch);
+      return condition;
+  }
+  function StringFlatten(arr){
+     if (arr.length==0) return "";
+     return arr.reduce(function(prev,cur){
+        return prev+cur;
+     });
+  }
+  binOperators = { 	"AND": {op:"&&", prec:20}, 
+					"OR": { op:"||", prec:21}, 
+					"+": { op:"+", prec:2}, 
+					"*": { op:"*", prec:1}, 
+					"=": { op:"==", prec:12}, 
+					"<": { op:"<", prec:10}, 
+					">": { op:">", prec:10}, 
+					}
+	function HighestPrecendence(expression){
+		var precedence = 0;
+		if (binOperators[expression[0]]!=undefined){
+			precedence = binOperators[expression[0]].prec;
+		}
+             if (Array.isArray(expression))
+		expression.forEach(function(x){
+			if (Array.isArray(x)){
+				var prec = HighestPrecendence(x);
+				if (prec>precedence)
+					precedence=prec;
+			}
+		});
+		return precedence;
+	}
+	function MaybeParens(expression, operator){
+	    var precedence = 0;
+		if (binOperators[operator] != undefined)
+			precedence = binOperators[operator].prec;
+		var highestPrecedence = HighestPrecendence(expression);
+		if (highestPrecedence>precedence)
+			return "(" + CompileToJava(expression) + ")";
+		return CompileToJava(expression);
+	}
+  function CompileToJava(tree){
+    if (typeof tree == "number")
+        return tree;
+    if (typeof tree == "string"){
+        if (tree[0]=='@')
+            return "scope."+tree.slice(1);
+        return tree;
+    }
+    if (tree==null||tree.length==0)
+        return "";
+    if (binOperators[tree[0]]!=undefined)
+        return MaybeParens(CompileToJava(tree[1]))+binOperators[tree[0]].op+MaybeParens(CompileToJava(tree[2]));
+    if (tree[0]=="IFELSE")
+        return MaybeParens(tree[1]) + "?"+MaybeParens(tree[2])+":"+MaybeParens(tree[3]);
+    return tree[0] +"(" + MaybeParens(tree[1]) + ")";
+  }
+  function ArrayFlatten(arr){
+     result =  arr.reduce(function(prev,cur){
+        return prev.concat(cur);
+     });
+     return result.filter(function(x){return x!=null;});
+  }
+}
+start
+  = val:logical {return CompileToJava(val);}
+
+logical
+ = left:andLogical ows "OR" ows right:logical {return ["OR", left, right];}
+ / andLogical
+
+andLogical
+ = left:boolean ows "AND" ows right:andLogical {return ["AND", left, right];}
+ / boolean
+
+boolean
+ = left:additive ows operator:("="/ "<>" / "<" / ">") ows right:(boolean/additive) {return [operator, left, right];}
+  / additive
+
+additive
+  = left:multiplicative "+" right:additive { return ['+', left, right]; }
+  / multiplicative
+
+multiplicative
+  = ows left:primary ows "*" right:multiplicative { return ['*', left, right]; }
+  / ows val:primary ows {return val;}
+
+primary
+  = integer
+  / "(" val:logical")" { return val; }
+  / literal
+  / string
+  / variable
+  / functionCall
+  / caseWhen
+
+string
+ = '"' [^\"] '"'
+
+variable
+ = "@" iden:identifier {return "@"+iden;}
+
+literal
+ = "null"
+
+identifier
+ = text:([a-zA-Z_0-9]*) { return StringFlatten(text);}
+
+integer "integer"
+  = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
+
+ows "optional whitespace"
+ = ws* {return '';}
+
+ws "whitespace"
+ = [ \t\n]+ {return '';}
+
+caseWhen "case statement"
+ = "CASE" variable:additive branches:("WHEN" condition:additive "THEN" action:logical {return ["WHEN", condition, action];})* elseBranch:("ELSE" action:logical {return ["ELSE", action];})? "END" {return ["CASE", variable, branches.concat(elseBranch?[elseBranch]:[])];}
+ / "CASE" ws branches:caseWhenIf elseBranch:("ELSE" action:logical {return action;})? "END" {return elseBranch?replaceLastElse(branches,elseBranch):branches;}
+
+caseWhenIf "case statement"
+ = "WHEN" condition:logical "THEN" action:logical ows elseif:caseWhenIf {return ["IFELSE", condition, action, elseif];}
+ / "WHEN" condition:logical "THEN" action:logical {return ["IFELSE", condition, action, null];}
+
+functionCall
+ = fn:identifier "(" args:(arg:logical "," {return arg;})* argLast:logical? ")" {return [fn].concat(args).concat(argLast?[argLast]:[]);}
