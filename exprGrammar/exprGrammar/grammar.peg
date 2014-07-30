@@ -1,0 +1,12 @@
+﻿@namespace exprGrammar
+@classname Grammar
+
+
+start <Node>
+	= primary
+
+primary <Node>
+	= number
+
+number <Node>
+	= num:([0-9]*) { new NumberNode(int.Parse(Flatten(num)))}

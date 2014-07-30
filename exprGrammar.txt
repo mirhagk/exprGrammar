@@ -1,1 +1,1 @@
-1=1 AND @foo = 3 OR 5 < @numberofcheerioseaten AND CASE WHEN @FOO = 3 THEN 0 WHEN @Foo = 2 THEN 42 ELSE 1 END
+1 + 2 + 3

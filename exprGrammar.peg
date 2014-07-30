@@ -40,7 +40,7 @@ boolean
   / additive
 
 additive
-  = left:multiplicative "+" right:additive { return ['+', left, right]; }
+  = left:additive "+" right:multiplicative { return ['+', left, right]; }
   / multiplicative
 
 multiplicative
