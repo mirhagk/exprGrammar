@@ -19,6 +19,8 @@ namespace exprGrammar
 
             Console.WriteLine(parseTree);
 
+            Console.ReadKey();
+
         }
     }
 }
