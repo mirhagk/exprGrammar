@@ -6,10 +6,18 @@ start <Node>
 	= logical
 
 logical <Node>
-	= multiplicative
+	= additive
 
-multiplicative <Node>
-	= ows left:multiplicative ows "*" right:multiplicative { new FunctionNode("*",left,right)}
+boolean <Node> -memoize
+ = left:boolean ows op:("="/ "<>" / "<" / ">" / "IN") ows right:additive { new FunctionNode(op,left,right)}
+  / additive
+
+additive <Node> -memoize
+	= left:additive ows "+" right:multiplicative { new FunctionNode("+",left,right)}
+	/ multiplicative
+  
+multiplicative <Node> -memoize
+	= ows left:multiplicative ows "*" right:primary { new FunctionNode("*",left,right)}
 	/ primary
 
 ows
