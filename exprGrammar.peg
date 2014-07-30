@@ -36,7 +36,7 @@ andLogical
  / boolean
 
 boolean
- = left:additive ows operator:("="/ "<>" / "<" / ">") ows right:(boolean/additive) {return [operator, left, right];}
+ = left:additive ows operator:("="/ "<>" / "<" / ">" / "IN") ows right:(boolean/additive) {return [operator, left, right];}
   / additive
 
 additive
