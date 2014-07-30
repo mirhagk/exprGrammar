@@ -15,6 +15,7 @@ namespace exprGrammar
         {
             Function = function;
             Arguments = arguments.ToList();
+            Arguments.Concat(arguments[0].Yield());
         }
         public string Function { get; set; }
         public IList<Node> Arguments { get; set; }

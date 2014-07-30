@@ -11,7 +11,7 @@ namespace exprGrammar
     class Program
     {
         static string parserFile = "./exprGrammar";
-        static string testCode = "../../exprGrammar.txt";
+        static string testCode = "./exprGrammar.txt";
 
         static void Main(string[] args)
         {

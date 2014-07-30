@@ -1,5 +1,6 @@
 ﻿@namespace exprGrammar
 @classname Grammar
+@using System.Linq
 
 
 start <Node>
@@ -37,6 +38,7 @@ primary <Node>
   / literal
   / string
   / variable
+  / functionCall
 
 integer <ValueNode<int>>
 	= num:([0-9]+) { new ValueNode<int>(int.Parse(Flatten(num)))}
@@ -52,3 +54,6 @@ variable <VariableNode>
 
 identifier <string>
 	= text:([a-zA-Z_0-9]+) {Flatten(text)}
+
+functionCall <FunctionNode>
+	= iden:identifier "(" args:((<Node> arg:logical "," {arg})*) lastArg:logical? ")" {new FunctionNode(iden,args.Concat(lastArg).ToArray())}
