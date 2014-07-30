@@ -3,6 +3,7 @@ var parserFile = './exprGrammar';
 var testCode = './exprGrammar.txt';
 var fs = require('fs');
 var util = require('util');
+var prefix = "LogicUtils."
 
 var child = exec('pegjs '+parserFile+'.peg '+parserFile+'.peg.js',function(err,stdout,stderr){
 	if (err)
@@ -76,5 +77,13 @@ function Compile(code){
     if (tree[0]=="IFELSE")
         return MaybeParens(tree[1]) + "?"+MaybeParens(tree[2])+":"+MaybeParens(tree[3]);
     return tree[0] +"(" + MaybeParens(tree[1]) + ")";
+  }
+  
+  
+  function CompileToIndependantLanguage(code){
+  	if (code[0] = "="){
+  		return prefix+CompileToIndependantLanguage(tree[1]);
+  	} 
+  	if (
   }
   
