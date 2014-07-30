@@ -86,4 +86,4 @@ caseWhenIf "case statement"
  / "WHEN" condition:logical "THEN" action:logical {return ["IFELSE", condition, action, null];}
 
 functionCall
- = fn:identifier "(" args:(arg:logical "," {return arg;})* argLast:logical? ")" {return [fn].concat(args).concat(argLast?[argLast]:[]);}
+ = fn:identifier "(" args:(arg:logical "," {return arg;})* argLast:logical? ")" {return [(fn||"list")].concat(args).concat(argLast?[argLast]:[]);}
