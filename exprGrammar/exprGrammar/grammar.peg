@@ -6,7 +6,17 @@ start <Node>
 	= logical
 
 logical <Node>
-	= primary
+	= multiplicative
+
+multiplicative <Node>
+	= ows left:multiplicative ows "*" right:multiplicative { new FunctionNode("*",left,right)}
+	/ primary
+
+ows
+ = ws* {null}
+
+ws
+ = [ \t\n]+ {null}
 
 primary <Node>
   = integer

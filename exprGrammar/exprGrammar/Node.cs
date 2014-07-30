@@ -11,6 +11,11 @@ namespace exprGrammar
     }
     public class FunctionNode : Node
     {
+        public FunctionNode(string function, params Node[] arguments)
+        {
+            Function = function;
+            Arguments = arguments.ToList();
+        }
         public string Function { get; set; }
         public IList<Node> Arguments { get; set; }
     }
