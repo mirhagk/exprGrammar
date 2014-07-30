@@ -3,6 +3,7 @@ var parserFile = './exprGrammar';
 var testCode = './exprGrammar.txt';
 var fs = require('fs');
 var util = require('util');
+var prefix = "LogicUtils."
 
 var child = exec('pegjs '+parserFile+'.peg '+parserFile+'.peg.js',function(err,stdout,stderr){
 	if (err)
@@ -27,20 +28,7 @@ function Compile(code){
 }
 
 
-  function replaceLastElse(condition, elseBranch){
-      if (condition[3]==null){
-          condition[3] = elseBranch;
-          return condition;
-      }
-      condition[3] = replaceLastElse(condition[3], elseBranch);
-      return condition;
-  }
-  function StringFlatten(arr){
-     if (arr.length==0) return "";
-     return arr.reduce(function(prev,cur){
-        return prev+cur;
-     });
-  }
+  
   binOperators = { 	"AND": {op:"&&", prec:20}, 
 					"OR": { op:"||", prec:21}, 
 					"+": { op:"+", prec:2}, 
@@ -49,6 +37,7 @@ function Compile(code){
 					"<": { op:"<", prec:10}, 
 					">": { op:">", prec:10}, 
 					}
+					
 	function HighestPrecendence(expression){
 		var precedence = 0;
 		if (binOperators[expression[0]]!=undefined){
@@ -78,7 +67,7 @@ function Compile(code){
         return tree;
     if (typeof tree == "string"){
         if (tree[0]=='@')
-            return "scope."+tree.slice(1);
+            return "ParticipantScreening."+tree.slice(1);
         return tree;
     }
     if (tree==null||tree.length==0)
@@ -89,9 +78,12 @@ function Compile(code){
         return MaybeParens(tree[1]) + "?"+MaybeParens(tree[2])+":"+MaybeParens(tree[3]);
     return tree[0] +"(" + MaybeParens(tree[1]) + ")";
   }
-  function ArrayFlatten(arr){
-     result =  arr.reduce(function(prev,cur){
-        return prev.concat(cur);
-     });
-     return result.filter(function(x){return x!=null;});
+  
+  
+  function CompileToIndependantLanguage(code){
+  	if (code[0] = "="){
+  		return prefix+CompileToIndependantLanguage(tree[1]);
+  	} 
+  	if (
   }
+  

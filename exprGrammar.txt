@@ -1,1 +1,1 @@
-1 + 2 + 3
+CASE WHEN(@HistoryOfAngina = 2) THEN 2 ELSE 1 END
