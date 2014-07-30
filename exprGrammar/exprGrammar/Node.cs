@@ -14,6 +14,14 @@ namespace exprGrammar
         public string Function { get; set; }
         public IList<Node> Arguments { get; set; }
     }
+    public class VariableNode : Node
+    {
+        public string Name { get; set; }
+        public VariableNode(string name)
+        {
+            Name = name;
+        }
+    }
     public class ValueNode<T> : Node
     {
         public T Value { get; set; }

@@ -11,10 +11,21 @@ logical <Node>
 primary <Node>
   = integer
   / "(" val:logical ")" {val}
+  / literal
   / string
+  / variable
 
 integer <ValueNode<int>>
 	= num:([0-9]*) { new ValueNode<int>(int.Parse(Flatten(num)))}
 
 string <ValueNode<string>>
 	= "\"" text:([^"]*) { new ValueNode<string>(Flatten(text))}
+
+literal <Node>
+	= "null" {null}
+
+variable <VariableNode>
+	= "@" iden:identifier { new VariableNode(iden)}
+
+identifier <string>
+	= text:([a-zA-Z_0-9]*) {Flatten(text)}
