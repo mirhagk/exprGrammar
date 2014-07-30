@@ -15,7 +15,7 @@ namespace exprGrammar
         }
 
 
-        public string Compile(string code) 
+        public string Compile(Node code) 
         {
             return CompileToJava(code);
         }
@@ -42,6 +42,7 @@ namespace exprGrammar
             {
 
             }
+            throw new NotImplementedException();
 
         }
 
