@@ -14,12 +14,12 @@ namespace exprGrammar
         public string Function { get; set; }
         public IList<Node> Arguments { get; set; }
     }
-    public class NumberNode : Node
+    public class ValueNode<T> : Node
     {
-        public NumberNode(int value)
+        public T Value { get; set; }
+        public ValueNode(T value)
         {
             Value = value;
         }
-        public int Value { get; set; }
     }
 }

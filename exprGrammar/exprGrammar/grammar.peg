@@ -3,10 +3,18 @@
 
 
 start <Node>
+	= logical
+
+logical <Node>
 	= primary
 
 primary <Node>
-	= number
+  = integer
+  / "(" val:logical ")" {val}
+  / string
 
-number <Node>
-	= num:([0-9]*) { new NumberNode(int.Parse(Flatten(num)))}
+integer <ValueNode<int>>
+	= num:([0-9]*) { new ValueNode<int>(int.Parse(Flatten(num)))}
+
+string <ValueNode<string>>
+	= "\"" text:([^"]*) { new ValueNode<string>(Flatten(text))}
