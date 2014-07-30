@@ -5,8 +5,13 @@
 start <Node>
 	= logical
 
-logical <Node>
-	= additive
+logical <Node> -memoize
+	= left:logical ows "OR" ows right:andLogical { new FunctionNode("OR",left,right)}
+	/ andLogical
+
+andLogical <Node> -memoize
+	= left:andLogical ows "AND" ows right:boolean {new FunctionNode("AND",left,right)}
+	/ boolean
 
 boolean <Node> -memoize
  = left:boolean ows op:("="/ "<>" / "<" / ">" / "IN") ows right:additive { new FunctionNode(op,left,right)}
