@@ -5,24 +5,24 @@
 start <Node>
 	= logical
 
-logical <Node> -memoize
-	= left:logical ows "OR" ows right:andLogical { new FunctionNode("OR",left,right)}
+logical <Node>
+	= left:andLogical ows "OR" ows right:andLogical { new FunctionNode("OR",left,right)}
 	/ andLogical
 
-andLogical <Node> -memoize
-	= left:andLogical ows "AND" ows right:boolean {new FunctionNode("AND",left,right)}
+andLogical <Node>
+	= left:boolean ows "AND" ows right:boolean {new FunctionNode("AND",left,right)}
 	/ boolean
 
-boolean <Node> -memoize
- = left:boolean ows op:("="/ "<>" / "<" / ">" / "IN") ows right:additive { new FunctionNode(op,left,right)}
+boolean <Node>
+ = left:additive ows op:("="/ "<>" / "<" / ">" / "IN") ows right:additive { new FunctionNode(op,left,right)}
   / additive
 
-additive <Node> -memoize
-	= left:additive ows "+" right:multiplicative { new FunctionNode("+",left,right)}
+additive <Node>
+	= left:multiplicative ows "+" right:multiplicative { new FunctionNode("+",left,right)}
 	/ multiplicative
   
-multiplicative <Node> -memoize
-	= ows left:multiplicative ows "*" right:primary { new FunctionNode("*",left,right)}
+multiplicative <Node>
+	= ows left:primary ows "*" right:primary { new FunctionNode("*",left,right)}
 	/ primary
 
 ows
@@ -39,7 +39,7 @@ primary <Node>
   / variable
 
 integer <ValueNode<int>>
-	= num:([0-9]*) { new ValueNode<int>(int.Parse(Flatten(num)))}
+	= num:([0-9]+) { new ValueNode<int>(int.Parse(Flatten(num)))}
 
 string <ValueNode<string>>
 	= "\"" text:([^"]*) { new ValueNode<string>(Flatten(text))}
@@ -51,4 +51,4 @@ variable <VariableNode>
 	= "@" iden:identifier { new VariableNode(iden)}
 
 identifier <string>
-	= text:([a-zA-Z_0-9]*) {Flatten(text)}
+	= text:([a-zA-Z_0-9]+) {Flatten(text)}
