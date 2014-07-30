@@ -9,16 +9,15 @@ namespace exprGrammar
 {
     class Program
     {
-        string parserFile = "./exprGrammar";
-        string testCode = "./exprGrammar.txt";
+        static string parserFile = "./exprGrammar";
+        static string testCode = "../../exprGrammar.txt";
 
         static void Main(string[] args)
         {
             var grammar = new Grammar();
-            grammar.Parse("");
+            var parseTree = grammar.Parse(File.ReadAllText(testCode));
 
-            
-            Console.WriteLine(Compiler.Compile(grammar.parse(File.ReadAllText(testCode))));
+            Console.WriteLine(parseTree);
 
         }
     }
